@@ -1,0 +1,2207 @@
+{
+  "meta": {
+    "staleThresholdDays": 15,
+    "minSampleSize": 5,
+    "notes": "staleThresholdDays and minSampleSize must match analytics/calculations/core.ts (STALE_THRESHOLD_DAYS, MIN_SAMPLE_SIZE) — this file documents the values the engine actually uses, it does not independently configure them. A handful of questions from the original 110-item brief are intentionally merged into one catalogue entry where the question text was a literal repeat across sections (e.g. 'total delivered revenue' appeared under both Executive Overview and Revenue & Deal Value) — each still appears once, in its primary section, and is fully searchable."
+  },
+  "questions": [
+    {
+      "id": "total_leads",
+      "category": "Executive Overview",
+      "question": "What is the total number of leads?",
+      "description": "Every lead matching the current filters.",
+      "metricType": "number",
+      "unitLabel": "Leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "activeClosed",
+        "deliveryStatus",
+        "dealValueRange",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "delivered_units",
+      "category": "Executive Overview",
+      "question": "How many vehicles have been delivered?",
+      "description": "Leads currently at Delivered status.",
+      "metricType": "number",
+      "unitLabel": "Vehicles delivered",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "delivered_revenue",
+      "category": "Executive Overview",
+      "question": "What is the total delivered revenue?",
+      "description": "Sum of deal value for delivered leads.",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dealValueRange",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "orders_placed",
+      "category": "Executive Overview",
+      "question": "How many orders have been placed?",
+      "description": "Leads whose status history ever reached Order Placed, including those later delivered.",
+      "metricType": "number",
+      "unitLabel": "Orders",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_reached",
+        "stage": "order_placed"
+      },
+      "format": "number"
+    },
+    {
+      "id": "active_pipeline_value",
+      "category": "Executive Overview",
+      "question": "What is the active pipeline value?",
+      "description": "Sum of deal value for leads not yet delivered or lost.",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dealValueRange",
+        "dateRange",
+        "expectedCloseRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "conversion_rate",
+      "category": "Executive Overview",
+      "question": "What is the overall conversion rate?",
+      "description": "Percentage of leads that reached delivered status.",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "delivered"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "leads_lost",
+      "category": "Executive Overview",
+      "question": "How many leads were lost?",
+      "description": "Leads currently at Lost status.",
+      "metricType": "number",
+      "unitLabel": "Lost leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "lostReason",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "lost"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "loss_rate",
+      "category": "Executive Overview",
+      "question": "What is the overall loss rate?",
+      "description": "Percentage of leads that ended up lost.",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "lostReason",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "lost"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "target_achievement_pct",
+      "category": "Executive Overview",
+      "question": "What percentage of the revenue target has been achieved?",
+      "description": "Delivered revenue against the applicable branch/month targets for this selection.",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "revenue",
+        "targetPart": "achievementPct"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "revenue_gap",
+      "category": "Executive Overview",
+      "question": "What is the revenue gap against target?",
+      "description": "Delivered revenue minus the applicable target revenue.",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "revenue",
+        "targetPart": "gap"
+      },
+      "format": "INR"
+    },
+    {
+      "id": "unit_gap",
+      "category": "Executive Overview",
+      "question": "What is the units gap against target?",
+      "description": "Delivered units minus the applicable target units.",
+      "metricType": "number",
+      "unitLabel": "Units",
+      "supportedFilters": [
+        "branch",
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "units",
+        "targetPart": "gap"
+      },
+      "format": "number"
+    },
+    {
+      "id": "status_distribution",
+      "category": "Pipeline",
+      "question": "How many leads are currently at each status?",
+      "description": "Current-status snapshot, not the historical journey.",
+      "metricType": "breakdown",
+      "breakdown": "status",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "stage_reached_all",
+      "category": "Pipeline",
+      "question": "How many leads have reached each stage?",
+      "description": "Every stage a lead's status history ever recorded, regardless of where it sits today.",
+      "metricType": "breakdown",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_reached"
+      },
+      "format": "number"
+    },
+    {
+      "id": "conv_new_contacted",
+      "category": "Pipeline",
+      "question": "What is the conversion rate from New → Contacted?",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_conversion",
+        "from": "new",
+        "to": "contacted"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "conv_contacted_testdrive",
+      "category": "Pipeline",
+      "question": "What is the conversion rate from Contacted → Test Drive?",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_conversion",
+        "from": "contacted",
+        "to": "test_drive"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "conv_testdrive_negotiation",
+      "category": "Pipeline",
+      "question": "What is the conversion rate from Test Drive → Negotiation?",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_conversion",
+        "from": "test_drive",
+        "to": "negotiation"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "conv_negotiation_order",
+      "category": "Pipeline",
+      "question": "What is the conversion rate from Negotiation → Order Placed?",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_conversion",
+        "from": "negotiation",
+        "to": "order_placed"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "conv_order_delivered",
+      "category": "Pipeline",
+      "question": "What is the conversion rate from Order Placed → Delivered?",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_conversion",
+        "from": "order_placed",
+        "to": "delivered"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "biggest_dropoff",
+      "category": "Pipeline",
+      "question": "Where is the biggest funnel drop-off?",
+      "description": "The stage-to-stage transition with the highest percentage of leads that didn't advance.",
+      "metricType": "ranking",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "funnel_dropoff"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "pipeline_value_by_stage",
+      "category": "Pipeline",
+      "question": "What is the value of the pipeline at each current stage?",
+      "description": "Deal value of still-open leads, by current status.",
+      "metricType": "breakdown",
+      "breakdown": "status",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "active_leads_count",
+      "category": "Pipeline",
+      "question": "How many active leads are currently in the pipeline?",
+      "metricType": "number",
+      "unitLabel": "Active leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange",
+        "expectedCloseRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "pct_active",
+      "category": "Pipeline",
+      "question": "What percentage of leads are currently active?",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "active"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "top_branch_leads",
+      "category": "Sales Performance",
+      "question": "Which branch generated the most leads?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_branch_delivered",
+      "category": "Sales Performance",
+      "question": "Which branch delivered the most vehicles?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_branch_revenue",
+      "category": "Sales Performance",
+      "question": "Which branch generated the most revenue?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_branch_conversion",
+      "category": "Sales Performance",
+      "question": "Which branch has the highest conversion rate?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "delivered"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "top_branch_loss_rate",
+      "category": "Sales Performance",
+      "question": "Which branch has the highest loss rate?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "lost"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "top_branch_pipeline",
+      "category": "Sales Performance",
+      "question": "Which branch has the largest active pipeline?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "closest_branch_target",
+      "category": "Sales Performance",
+      "question": "Which branch is closest to its revenue target?",
+      "description": "Smallest absolute gap between delivered revenue and target revenue.",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "revenue",
+        "targetPart": "closest"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "largest_branch_gap",
+      "category": "Sales Performance",
+      "question": "Which branch has the largest revenue gap to target?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "rankDirection": "asc",
+      "supportedFilters": [
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "revenue",
+        "targetPart": "gap"
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_rep_leads",
+      "category": "Sales Performance",
+      "question": "Which sales rep generated the most leads?",
+      "metricType": "ranking",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_rep_delivered",
+      "category": "Sales Performance",
+      "question": "Which sales rep delivered the most vehicles?",
+      "metricType": "ranking",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_rep_revenue",
+      "category": "Sales Performance",
+      "question": "Which sales rep generated the most revenue?",
+      "metricType": "ranking",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_rep_conversion",
+      "category": "Sales Performance",
+      "question": "Which sales rep has the highest conversion rate?",
+      "metricType": "ranking",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "delivered"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "top_rep_pipeline",
+      "category": "Sales Performance",
+      "question": "Which sales rep has the highest active pipeline value?",
+      "metricType": "ranking",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_rep_stale",
+      "category": "Sales Performance",
+      "question": "Which sales rep has the highest number of stale leads?",
+      "description": "Stale = active lead with no activity in the last 15+ days.",
+      "metricType": "ranking",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "stale",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_source_leads",
+      "category": "Lead Sources",
+      "question": "Which lead source generated the most leads?",
+      "metricType": "ranking",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_source_delivered",
+      "category": "Lead Sources",
+      "question": "Which lead source generated the most delivered vehicles?",
+      "metricType": "ranking",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_source_revenue",
+      "category": "Lead Sources",
+      "question": "Which lead source generated the most revenue?",
+      "metricType": "ranking",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_source_conversion",
+      "category": "Lead Sources",
+      "question": "Which lead source has the highest conversion rate?",
+      "metricType": "ranking",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "delivered"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "top_source_loss_rate",
+      "category": "Lead Sources",
+      "question": "Which lead source has the highest loss rate?",
+      "metricType": "ranking",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "lost"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "avg_deal_value_by_source",
+      "category": "Lead Sources",
+      "question": "What is the average deal value by lead source?",
+      "metricType": "breakdown",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "average",
+        "field": "deal_value"
+      },
+      "format": "INR"
+    },
+    {
+      "id": "pipeline_value_by_source",
+      "category": "Lead Sources",
+      "question": "What is the active pipeline value by lead source?",
+      "metricType": "breakdown",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_model_leads",
+      "category": "Models",
+      "question": "Which model received the most leads?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_model_delivered",
+      "category": "Models",
+      "question": "Which model had the most deliveries?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "top_model_revenue",
+      "category": "Models",
+      "question": "Which model generated the most revenue?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_model_conversion",
+      "category": "Models",
+      "question": "Which model has the highest conversion rate?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "delivered"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "top_model_avg_deal_value",
+      "category": "Models",
+      "question": "Which model has the highest average deal value?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "average",
+        "field": "deal_value"
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_model_pipeline",
+      "category": "Models",
+      "question": "Which model has the largest active pipeline?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "top_model_loss_rate",
+      "category": "Models",
+      "question": "Which model has the highest loss rate?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "ratio",
+        "numerator": {
+          "type": "count",
+          "condition": {
+            "status": "lost"
+          }
+        },
+        "denominator": {
+          "type": "count"
+        }
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "top_model_delivery_time",
+      "category": "Models",
+      "question": "Which model takes the longest to deliver?",
+      "metricType": "ranking",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "delivery",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "delivery_metric",
+        "deliveryMetric": "byModel"
+      },
+      "format": "days"
+    },
+    {
+      "id": "avg_delivered_deal_value",
+      "category": "Revenue & Deal Value",
+      "question": "What is the average delivered deal value?",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "average",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "median_delivered_deal_value",
+      "category": "Revenue & Deal Value",
+      "question": "What is the median delivered deal value?",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "median",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "avg_active_pipeline_deal_value",
+      "category": "Revenue & Deal Value",
+      "question": "What is the average active pipeline deal value?",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "average",
+        "field": "deal_value",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "median_active_pipeline_deal_value",
+      "category": "Revenue & Deal Value",
+      "question": "What is the median active pipeline deal value?",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "median",
+        "field": "deal_value",
+        "condition": {
+          "status": "active"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "revenue_by_branch",
+      "category": "Revenue & Deal Value",
+      "question": "How much revenue came from each branch?",
+      "metricType": "breakdown",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "revenue_by_rep",
+      "category": "Revenue & Deal Value",
+      "question": "How much revenue came from each sales rep?",
+      "metricType": "breakdown",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "revenue_by_source",
+      "category": "Revenue & Deal Value",
+      "question": "How much revenue came from each source?",
+      "metricType": "breakdown",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "revenue_by_model",
+      "category": "Revenue & Deal Value",
+      "question": "How much revenue came from each model?",
+      "metricType": "breakdown",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "delivered"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "lost_reasons_breakdown",
+      "category": "Loss Analysis",
+      "question": "What are the most common lost reasons?",
+      "metricType": "breakdown",
+      "breakdown": "lostReason",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "lost"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "lost_revenue_by_reason",
+      "category": "Loss Analysis",
+      "question": "Which lost reason represents the most lost revenue?",
+      "metricType": "ranking",
+      "breakdown": "lostReason",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "sum",
+        "field": "deal_value",
+        "condition": {
+          "status": "lost"
+        }
+      },
+      "format": "INR"
+    },
+    {
+      "id": "branch_most_lost",
+      "category": "Loss Analysis",
+      "question": "Which branch has the most lost leads?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "lostReason",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "lost"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "rep_most_lost",
+      "category": "Loss Analysis",
+      "question": "Which sales rep has the most lost leads?",
+      "metricType": "ranking",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "lostReason",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "lost"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "source_most_lost",
+      "category": "Loss Analysis",
+      "question": "Which source has the most lost leads?",
+      "metricType": "ranking",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "lostReason",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "lost"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "model_most_lost",
+      "category": "Loss Analysis",
+      "question": "Which model has the most lost leads?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "lostReason",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "count",
+        "condition": {
+          "status": "lost"
+        }
+      },
+      "format": "number"
+    },
+    {
+      "id": "velocity_new_contacted",
+      "category": "Sales Velocity",
+      "question": "What is the median time from New → Contacted?",
+      "metricType": "duration",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_duration",
+        "from": "new",
+        "to": "contacted"
+      },
+      "format": "days"
+    },
+    {
+      "id": "velocity_contacted_testdrive",
+      "category": "Sales Velocity",
+      "question": "What is the median time from Contacted → Test Drive?",
+      "metricType": "duration",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_duration",
+        "from": "contacted",
+        "to": "test_drive"
+      },
+      "format": "days"
+    },
+    {
+      "id": "velocity_testdrive_negotiation",
+      "category": "Sales Velocity",
+      "question": "What is the median time from Test Drive → Negotiation?",
+      "metricType": "duration",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_duration",
+        "from": "test_drive",
+        "to": "negotiation"
+      },
+      "format": "days"
+    },
+    {
+      "id": "velocity_negotiation_order",
+      "category": "Sales Velocity",
+      "question": "What is the median time from Negotiation → Order Placed?",
+      "metricType": "duration",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_duration",
+        "from": "negotiation",
+        "to": "order_placed"
+      },
+      "format": "days"
+    },
+    {
+      "id": "velocity_order_delivered",
+      "category": "Sales Velocity",
+      "question": "What is the median time from Order Placed → Delivered?",
+      "metricType": "duration",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "status",
+        "dateRange"
+      ],
+      "dataGrain": "status_history",
+      "dateField": "status_history",
+      "calculation": {
+        "type": "stage_duration",
+        "from": "order_placed",
+        "to": "delivered"
+      },
+      "format": "days"
+    },
+    {
+      "id": "median_sales_cycle",
+      "category": "Sales Velocity",
+      "question": "What is the median total sales cycle?",
+      "description": "Days from a lead's creation to delivery, for delivered leads.",
+      "metricType": "duration",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sales_cycle"
+      },
+      "format": "days"
+    },
+    {
+      "id": "longest_cycle_branch",
+      "category": "Sales Velocity",
+      "question": "Which branch has the longest sales cycle?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sales_cycle"
+      },
+      "format": "days"
+    },
+    {
+      "id": "longest_cycle_rep",
+      "category": "Sales Velocity",
+      "question": "Which sales rep has the longest sales cycle?",
+      "metricType": "ranking",
+      "breakdown": "salesRep",
+      "supportedFilters": [
+        "branch",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sales_cycle"
+      },
+      "format": "days"
+    },
+    {
+      "id": "longest_cycle_model",
+      "category": "Sales Velocity",
+      "question": "Which model has the longest sales cycle?",
+      "metricType": "ranking",
+      "breakdown": "model",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sales_cycle"
+      },
+      "format": "days"
+    },
+    {
+      "id": "longest_cycle_source",
+      "category": "Sales Velocity",
+      "question": "Which source has the longest sales cycle?",
+      "metricType": "ranking",
+      "breakdown": "source",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "sales_cycle"
+      },
+      "format": "days"
+    },
+    {
+      "id": "not_contacted_recently",
+      "category": "Lead Aging & Follow-up",
+      "question": "How many active leads have not been contacted recently?",
+      "description": "Uses the same 15-day no-activity threshold as \"stale\" — see meta.staleThresholdDays.",
+      "metricType": "number",
+      "unitLabel": "Active leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "stale",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "stale_active_leads",
+      "category": "Lead Aging & Follow-up",
+      "question": "How many active leads are stale?",
+      "description": "Stale = active lead with no activity in the last 15+ days.",
+      "metricType": "number",
+      "unitLabel": "Stale leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "stale",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "stale_value",
+      "category": "Lead Aging & Follow-up",
+      "question": "What is the total value of stale active leads?",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "stale",
+        "ageMetric": "value"
+      },
+      "format": "INR"
+    },
+    {
+      "id": "oldest_active_leads",
+      "category": "Lead Aging & Follow-up",
+      "question": "What are the oldest active leads?",
+      "description": "The 5 active leads with the longest time since last activity.",
+      "metricType": "list",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "lead_list",
+        "sortBy": "daysInactive",
+        "direction": "desc",
+        "limit": 5
+      },
+      "format": "text"
+    },
+    {
+      "id": "aging_0_2",
+      "category": "Lead Aging & Follow-up",
+      "question": "How many active leads are 0–2 days old?",
+      "description": "\"Old\" here means days since last activity.",
+      "metricType": "number",
+      "unitLabel": "Active leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "aging_bucket",
+        "bucket": "0-2",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "aging_3_7",
+      "category": "Lead Aging & Follow-up",
+      "question": "How many active leads are 3–7 days old?",
+      "metricType": "number",
+      "unitLabel": "Active leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "aging_bucket",
+        "bucket": "3-7",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "aging_8_14",
+      "category": "Lead Aging & Follow-up",
+      "question": "How many active leads are 8–14 days old?",
+      "metricType": "number",
+      "unitLabel": "Active leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "aging_bucket",
+        "bucket": "8-14",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "aging_15_30",
+      "category": "Lead Aging & Follow-up",
+      "question": "How many active leads are 15–30 days old?",
+      "metricType": "number",
+      "unitLabel": "Active leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "aging_bucket",
+        "bucket": "15-30",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "aging_30_plus",
+      "category": "Lead Aging & Follow-up",
+      "question": "How many active leads are 30+ days old?",
+      "metricType": "number",
+      "unitLabel": "Active leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "created_at",
+      "calculation": {
+        "type": "aging_bucket",
+        "bucket": "30+",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "overdue_count",
+      "category": "Lead Aging & Follow-up",
+      "question": "How many active leads have passed their expected close date?",
+      "metricType": "number",
+      "unitLabel": "Overdue leads",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "expected_close_date",
+      "calculation": {
+        "type": "overdue",
+        "ageMetric": "count"
+      },
+      "format": "number"
+    },
+    {
+      "id": "overdue_value",
+      "category": "Lead Aging & Follow-up",
+      "question": "What is the value of overdue active opportunities?",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "expected_close_date",
+      "calculation": {
+        "type": "overdue",
+        "ageMetric": "value"
+      },
+      "format": "INR"
+    },
+    {
+      "id": "median_delivery_time",
+      "category": "Delivery",
+      "question": "What is the median order-to-delivery time?",
+      "metricType": "duration",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "delivery",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "delivery_metric",
+        "deliveryMetric": "medianDays"
+      },
+      "format": "days"
+    },
+    {
+      "id": "avg_delivery_time",
+      "category": "Delivery",
+      "question": "What is the average order-to-delivery time?",
+      "metricType": "duration",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "delivery",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "delivery_metric",
+        "deliveryMetric": "averageDays"
+      },
+      "format": "days"
+    },
+    {
+      "id": "longest_delivery_branch",
+      "category": "Delivery",
+      "question": "Which branch has the longest delivery time?",
+      "metricType": "ranking",
+      "supportedFilters": [
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "delivery",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "delivery_metric",
+        "deliveryMetric": "byBranch"
+      },
+      "format": "days"
+    },
+    {
+      "id": "longest_delivery_model",
+      "category": "Delivery",
+      "question": "Which model has the longest delivery time?",
+      "metricType": "ranking",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "dateRange"
+      ],
+      "dataGrain": "delivery",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "delivery_metric",
+        "deliveryMetric": "byModel"
+      },
+      "format": "days"
+    },
+    {
+      "id": "delay_reasons",
+      "category": "Delivery",
+      "question": "What are the most common delivery delay reasons?",
+      "metricType": "breakdown",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "delivery",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "delivery_metric",
+        "deliveryMetric": "delayReasons"
+      },
+      "format": "number"
+    },
+    {
+      "id": "delayed_deliveries_count",
+      "category": "Delivery",
+      "question": "How many deliveries experienced delays?",
+      "metricType": "number",
+      "unitLabel": "Delayed deliveries",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "delivery",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "delivery_metric",
+        "deliveryMetric": "delayedCount"
+      },
+      "format": "number"
+    },
+    {
+      "id": "delayed_deliveries_pct",
+      "category": "Delivery",
+      "question": "What percentage of deliveries were delayed?",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "delivery",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "delivery_metric",
+        "deliveryMetric": "delayedPct"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "total_revenue_target",
+      "category": "Targets",
+      "question": "What is the total revenue target?",
+      "metricType": "currency",
+      "supportedFilters": [
+        "branch",
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "revenue",
+        "targetPart": "target"
+      },
+      "format": "INR"
+    },
+    {
+      "id": "total_unit_target",
+      "category": "Targets",
+      "question": "What is the total unit target?",
+      "metricType": "number",
+      "unitLabel": "Units",
+      "supportedFilters": [
+        "branch",
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "units",
+        "targetPart": "target"
+      },
+      "format": "number"
+    },
+    {
+      "id": "unit_achievement_pct",
+      "category": "Targets",
+      "question": "What percentage of the unit target has been achieved?",
+      "metricType": "percentage",
+      "supportedFilters": [
+        "branch",
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "units",
+        "targetPart": "achievementPct"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "branch_highest_achievement",
+      "category": "Targets",
+      "question": "Which branch has the highest revenue target achievement?",
+      "metricType": "ranking",
+      "breakdown": "branch",
+      "supportedFilters": [
+        "dateRange"
+      ],
+      "dataGrain": "target",
+      "dateField": "target_month",
+      "calculation": {
+        "type": "target_metric",
+        "target": "revenue",
+        "targetPart": "achievementPct"
+      },
+      "format": "percentage"
+    },
+    {
+      "id": "month_highest_revenue",
+      "category": "Targets",
+      "question": "Which month had the highest revenue?",
+      "metricType": "ranking",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "month_ranking",
+        "monthMetric": "revenue"
+      },
+      "format": "INR"
+    },
+    {
+      "id": "month_highest_deliveries",
+      "category": "Targets",
+      "question": "Which month had the highest number of deliveries?",
+      "metricType": "ranking",
+      "supportedFilters": [
+        "branch",
+        "salesRep",
+        "source",
+        "model",
+        "dateRange"
+      ],
+      "dataGrain": "lead",
+      "dateField": "delivery_date",
+      "calculation": {
+        "type": "month_ranking",
+        "monthMetric": "deliveries"
+      },
+      "format": "number"
+    }
+  ]
+}

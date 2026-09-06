@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST http://localhost:5173/api/ask-ai -H 'Content-Type: application/json' -d '{\"messages\":[{\"role\":\"user\",\"text\":\"What was our revenue last month?\"}]}')",
+      "Bash(node --check server/gemini.js)",
+      "Bash(lsof -ti:8787 -sTCP:LISTEN)",
+      "Bash(awk '/\\\\/\\\\* ---------- Ask AI ---------- \\\\*\\\\//,/^\\\\/\\\\* ---------- Responsive ---------- \\\\*\\\\/$/' src/components/AnalyticsPage/QuestionsView.css)",
+      "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/pw_rankings.py\")",
+      "Bash(curl -s http://localhost:5173/ -o /dev/null -w \"vite: %{http_code}\\\\n\")"
+    ]
+  }
+}
