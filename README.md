@@ -1,9 +1,12 @@
-# Industrial IQ
+# DealerPulse
 
-A dealership performance dashboard — Analytics (what's happening), Actionable (what
-to do about it), and a row-level Data Explorer, built on a synthetic dataset of
-leads, branches, reps, deliveries, and targets. See `DECISIONS.md` for the product
-reasoning and `ASSIGNMENT.md` for the brief this was built against.
+A dealership sales intelligence dashboard — **Actionable** (what should I do about
+it, the default landing page), **Analytics** (what's happening), **Questions** (ask
+anything in plain English), plus a row-level raw data view — built on a synthetic
+dataset of leads, branches, reps, deliveries, and targets. A guided walkthrough
+introduces all of it on first visit (replayable any time from the topbar). See
+`DECISIONS.md` for the product reasoning and `ASSIGNMENT.md` for the brief this was
+built against.
 
 ## Running it locally
 
@@ -40,9 +43,13 @@ the Vercel project settings — it's never read from a committed file.
 
 - `src/analytics/calculations/` — the one shared calculation layer. Every
   number shown anywhere in the app (charts, rankings, Actionable's risk
-  detection, the Questions engine) is computed here exactly once.
-- `src/components/AnalyticsPage/`, `src/components/ActionablePage/` — the two
-  main views.
+  detection, the What-If Simulator, the Questions engine) is computed here
+  exactly once.
+- `src/components/ActionablePage/`, `src/components/AnalyticsPage/` — the main
+  views (Analytics also owns `QuestionsView.tsx`, its own top-level tab).
+- `src/walkthrough/` — the guided tour: `steps.ts` defines what each step
+  says and which real element it points at; `Walkthrough.tsx` drives tab
+  navigation and positions the spotlight/tooltip around that element.
 - `server/gemini.js`, `server/data.js`, `server/askAiProcessor.js` — the Ask AI
   logic (Gemini client, dataset access, and the retrieval step that grounds
   Gemini's answers in real numbers instead of letting it guess). Reused

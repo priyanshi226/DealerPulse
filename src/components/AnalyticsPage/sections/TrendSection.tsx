@@ -99,7 +99,7 @@ export function TrendSection({ raw, filteredLeads, filteredDeliveries, reference
 
   return (
     <SectionCard
-      title="Trends"
+      title="How has performance changed over time?"
       description={DESCRIPTION[metric]}
       controls={<SegmentedControl value={metric} onChange={setMetric} options={METRICS} />}
       info={<ChartInfoButton info={info} filters={filters} filterOptions={filterOptions} />}

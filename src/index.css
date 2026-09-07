@@ -146,3 +146,89 @@ select {
 table {
   border-collapse: collapse;
 }
+
+/* ---------- App-wide micro-animations ----------
+   A restrained entrance animation for the main content sections on every
+   page (Analytics/Actionable's SectionCards, Actionable's priority/action
+   cards, ranking/rep rows) plus consistent hover transitions on interactive
+   surfaces. Kept to one shared definition here rather than duplicated across
+   every page's own CSS, so the whole app moves the same way. */
+
+@keyframes app-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.analytics-section,
+.priority-card,
+.action-card,
+.bottleneck-row,
+.rep-capacity-row,
+.entity-detail {
+  animation: app-fade-in-up 0.35s ease both;
+}
+
+/* A light stagger across the first several siblings in a stack/grid, so a
+   page's sections (or a row of priority cards) settle in one after another
+   instead of all snapping in at once — capped at 8 so a long list doesn't
+   end in a visibly delayed straggler. */
+.actionable-stack > .analytics-section:nth-child(1),
+.analytics-stack > .analytics-section:nth-child(1),
+.priority-grid > .priority-card:nth-child(1),
+.action-grid > .action-card:nth-child(1) {
+  animation-delay: 0s;
+}
+.actionable-stack > .analytics-section:nth-child(2),
+.analytics-stack > .analytics-section:nth-child(2),
+.priority-grid > .priority-card:nth-child(2),
+.action-grid > .action-card:nth-child(2) {
+  animation-delay: 0.05s;
+}
+.actionable-stack > .analytics-section:nth-child(3),
+.analytics-stack > .analytics-section:nth-child(3),
+.priority-grid > .priority-card:nth-child(3),
+.action-grid > .action-card:nth-child(3) {
+  animation-delay: 0.1s;
+}
+.actionable-stack > .analytics-section:nth-child(4),
+.analytics-stack > .analytics-section:nth-child(4),
+.priority-grid > .priority-card:nth-child(4),
+.action-grid > .action-card:nth-child(4) {
+  animation-delay: 0.15s;
+}
+.actionable-stack > .analytics-section:nth-child(n + 5),
+.analytics-stack > .analytics-section:nth-child(n + 5) {
+  animation-delay: 0.2s;
+}
+
+/* Consistent, cheap hover feedback on every clickable surface — buttons,
+   cards, rows — instead of an instant color snap. */
+button,
+.priority-card,
+.action-card,
+.bottleneck-row,
+.rep-capacity-row,
+.entity-detail__deal-row,
+.ranking-table tbody tr,
+.metric-table tbody tr,
+.deals-table tbody tr {
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, color 0.15s ease, opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

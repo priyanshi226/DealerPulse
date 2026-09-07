@@ -1,19 +1,40 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { QUESTIONS } from '../../analytics/questions/catalogue';
+import { loadDealershipData } from '../../data/loadData';
 import type { NormalizedData } from '../../data/loadData';
 import { QuestionCard } from './questions/QuestionCard';
 import { QuestionSearch } from './questions/QuestionSearch';
 import './QuestionsView.css';
 
-interface QuestionsViewProps {
-  data: NormalizedData;
-  referenceNowIso: string;
-}
-
-export function QuestionsView({ data, referenceNowIso }: QuestionsViewProps) {
+/** A standalone top-level page (its own nav tab) — loads its own data the
+ * same way ActionablePage and DataExplorer do, rather than relying on a
+ * parent shell, so it can be reached directly instead of being nested a
+ * click deeper inside Analytics. */
+export function QuestionsView() {
+  const [data, setData] = useState<NormalizedData | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const highlightTimeout = useRef<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadDealershipData()
+      .then((result) => {
+        if (!cancelled) setData(result);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load data');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const referenceNowIso = useMemo(() => {
+    if (!data || data.leads.length === 0) return new Date().toISOString();
+    return data.leads.reduce((max, l) => (l.last_activity_at > max ? l.last_activity_at : max), data.leads[0].last_activity_at);
+  }, [data]);
 
   const categories = useMemo(() => {
     const order: string[] = [];
@@ -37,13 +58,29 @@ export function QuestionsView({ data, referenceNowIso }: QuestionsViewProps) {
     highlightTimeout.current = window.setTimeout(() => setHighlightedId(null), 1600);
   }
 
+  if (error) {
+    return <div className="state-screen state-screen--error">Couldn't load dealership data: {error}</div>;
+  }
+
+  if (!data) {
+    return <div className="state-screen">Loading dealership data…</div>;
+  }
+
   return (
     <div className="questions-page">
+      <div className="questions-page__intro">
+        <h1 className="questions-page__title">What do you want to know?</h1>
+        <p className="questions-page__subtitle">
+          Pick a question, add filters to make it specific, and get a real answer from your data — no analytics
+          background needed.
+        </p>
+      </div>
+
       <QuestionSearch questions={QUESTIONS} onSelect={handleSelect} />
 
       <div className="questions-ask-ai-pointer">
-        ✨ Looking for <strong>Ask AI</strong>? It's now on the <strong>Actionable</strong> tab, alongside the priorities and
-        recommendations it can reason about.
+        ✨ Have a question that's not listed? <strong>Ask AI</strong> lives on the <strong>Actionable</strong> tab and can
+        answer anything in plain English.
       </div>
 
       <div className="questions-stack">

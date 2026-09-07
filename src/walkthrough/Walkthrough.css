@@ -1,0 +1,172 @@
+.walkthrough-root {
+  position: fixed;
+  inset: 0;
+  z-index: 1990;
+}
+
+.walkthrough-blocker {
+  position: fixed;
+  inset: 0;
+  z-index: 1990;
+  background: transparent;
+}
+
+.walkthrough-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 1991;
+  background: rgba(10, 12, 16, 0.55);
+}
+
+.walkthrough-spotlight {
+  position: fixed;
+  z-index: 1995;
+  border-radius: 10px;
+  box-shadow: 0 0 0 9999px rgba(10, 12, 16, 0.6);
+  pointer-events: none;
+  transition: top 0.35s ease, left 0.35s ease, width 0.35s ease, height 0.35s ease;
+}
+
+.walkthrough-card {
+  position: fixed;
+  z-index: 2000;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+  padding: 18px 20px;
+  transition: top 0.35s ease, left 0.35s ease;
+  animation: walkthrough-card-in 0.25s ease;
+}
+
+.walkthrough-card--centered {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  max-width: calc(100vw - 32px);
+}
+
+@keyframes walkthrough-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.walkthrough-card--centered {
+  animation: walkthrough-card-in-centered 0.25s ease;
+}
+
+@keyframes walkthrough-card-in-centered {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.walkthrough-card__progress {
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.walkthrough-card__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 8px;
+  letter-spacing: -0.005em;
+}
+
+.walkthrough-card__body {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+
+.walkthrough-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.walkthrough-card__skip {
+  appearance: none;
+  border: none;
+  background: none;
+  color: var(--text-faint);
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 6px 4px;
+}
+
+.walkthrough-card__skip:hover {
+  color: var(--text-muted);
+}
+
+.walkthrough-card__nav {
+  display: flex;
+  gap: 8px;
+}
+
+.walkthrough-card__back {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12.5px;
+  font-weight: 550;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.walkthrough-card__back:hover {
+  border-color: var(--border-strong);
+}
+
+.walkthrough-card__next {
+  appearance: none;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 650;
+  padding: 7px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.walkthrough-card__next:hover {
+  opacity: 0.92;
+}
+
+@media (max-width: 520px) {
+  .walkthrough-card {
+    width: calc(100vw - 32px) !important;
+    left: 16px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .walkthrough-spotlight,
+  .walkthrough-card {
+    transition: none;
+    animation: none;
+  }
+}

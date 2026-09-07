@@ -1,29 +1,26 @@
-.analytics-shell__topbar {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 20px 28px 0;
-  display: flex;
-  justify-content: center;
-}
-
-.analytics-mode-toggle.segmented {
-  padding: 4px;
-  border-radius: 12px;
-}
-
-.analytics-mode-toggle .segmented__item {
-  padding: 7px 22px;
-  font-size: 13px;
-}
-
-.analytics-mode-toggle .segmented__item--active {
-  font-weight: 650;
-}
-
 .analytics-page {
   max-width: 1440px;
   margin: 0 auto;
   padding: 24px 28px 48px;
+}
+
+.analytics-page__intro {
+  margin-bottom: 18px;
+}
+
+.analytics-page__title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.analytics-page__subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 640px;
 }
 
 .analytics-stack {

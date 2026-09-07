@@ -14,7 +14,7 @@ interface FunnelSectionProps {
 
 export function FunnelSection({ funnel, filters, filterOptions }: FunnelSectionProps) {
   const info: ChartInfo = {
-    title: 'Lead Journey — Historical Funnel',
+    title: 'Where do leads drop off?',
     chartType: 'Funnel',
     description: "Every stage a filtered lead's status history ever reached, regardless of where it sits today.",
     formula: `${FORMULA.stageReached}\n${FORMULA.stageConversion}`,
@@ -32,8 +32,8 @@ export function FunnelSection({ funnel, filters, filterOptions }: FunnelSectionP
 
   return (
     <SectionCard
-      title="Lead Journey — Historical Funnel"
-      description="Every stage a filtered lead's status history ever reached, regardless of where it sits today."
+      title="Where do leads drop off?"
+      description="Every stage a lead has passed through on its way to a sale — shows where the funnel narrows the most."
       info={<ChartInfoButton info={info} filters={filters} filterOptions={filterOptions} />}
     >
       <FunnelChart result={funnel} />

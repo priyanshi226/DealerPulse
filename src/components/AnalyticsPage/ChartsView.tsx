@@ -62,6 +62,13 @@ export function ChartsView({ data, referenceNowIso }: ChartsViewProps) {
 
   return (
     <div className="analytics-page">
+      <div className="analytics-page__intro">
+        <h1 className="analytics-page__title">How are sales performing?</h1>
+        <p className="analytics-page__subtitle">
+          Revenue, conversion, pipeline, and how your branches and reps compare — the full picture behind the numbers.
+        </p>
+      </div>
+
       <GlobalFilterBar filters={filters} options={filterOptions} onChange={setFilters} />
 
       {filteredLeads.length === 0 ? (
@@ -72,14 +79,16 @@ export function ChartsView({ data, referenceNowIso }: ChartsViewProps) {
         <div className="analytics-stack">
           <OverviewSection overview={overview} filters={filters} filterOptions={filterOptions} />
 
-          <RankedDealershipsSection
-            filteredLeads={filteredLeads}
-            filteredDeliveries={filteredDeliveries}
-            referenceNowIso={referenceNowIso}
-            raw={data.raw}
-            filters={filters}
-            filterOptions={filterOptions}
-          />
+          <div id="ranked-dealerships">
+            <RankedDealershipsSection
+              filteredLeads={filteredLeads}
+              filteredDeliveries={filteredDeliveries}
+              referenceNowIso={referenceNowIso}
+              raw={data.raw}
+              filters={filters}
+              filterOptions={filterOptions}
+            />
+          </div>
           <RankedRepsSection
             filteredLeads={filteredLeads}
             filteredDeliveries={filteredDeliveries}

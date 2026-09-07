@@ -11,3 +11,4 @@ export * from './aging';
 export * from './expectedClose';
 export * from './loss';
 export * from './actionable';
+export * from './whatIf';

@@ -6,7 +6,7 @@
 // rule over real metrics, so it's reproducible and auditable.
 
 import { SOURCE_LABELS, STATUS_LABELS } from '../../data/transformations';
-import type { Delivery, EnrichedLead, LeadStatus } from '../../data/types';
+import type { Delivery, EnrichedLead, LeadSource, LeadStatus } from '../../data/types';
 import { MIN_SAMPLE_SIZE, STALE_THRESHOLD_DAYS, daysBetween, isActive, median, pct, sumBy } from './core';
 import { calculateDimensionPerformance } from './dimensionPerformance';
 
@@ -245,6 +245,7 @@ export interface DealRiskRow {
   leadId: string;
   customerName: string;
   model: string;
+  source: LeadSource;
   dealValue: number;
   stage: LeadStatus;
   stageLabel: string;
@@ -315,6 +316,7 @@ export function calculateDealRisk(filteredLeads: EnrichedLead[], referenceNowIso
       leadId: lead.id,
       customerName: lead.customer_name,
       model: lead.model_interested,
+      source: lead.source,
       dealValue: lead.deal_value,
       stage: lead.status,
       stageLabel: STATUS_LABELS[lead.status],

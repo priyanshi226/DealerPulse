@@ -74,7 +74,7 @@ export function DeliverySection({ delivery, filters, filterOptions }: DeliverySe
   return (
     <SectionCard
       title="Delivery Performance"
-      description="Order-to-delivery timing and delay causes for the filtered leads' delivery records."
+      description="How long it takes from order to delivery, and the most common reasons for delays."
       info={<ChartInfoButton info={info} filters={filters} filterOptions={filterOptions} />}
     >
       <div className="stat-grid stat-grid--compact">

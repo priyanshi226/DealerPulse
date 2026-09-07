@@ -39,7 +39,7 @@ export function VelocitySection({ stages, filters, filterOptions }: VelocitySect
   return (
     <SectionCard
       title="Sales Velocity"
-      description="Median days spent between consecutive stages, from each lead's own status history."
+      description="How quickly a typical deal moves from one stage to the next — lower is faster."
       info={<ChartInfoButton info={info} filters={filters} filterOptions={filterOptions} />}
     >
       <BarChart rows={rows} emptyMessage="No stage-to-stage timing data for the selected filters." />

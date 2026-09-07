@@ -529,6 +529,235 @@
   cursor: pointer;
 }
 
+/* ---------- What-If Simulator ---------- */
+
+.whatif-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.whatif {
+  max-width: 560px;
+}
+
+.whatif__question {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+.whatif__slider {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.whatif__slider-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 2px;
+  margin-bottom: 20px;
+}
+
+.whatif__flow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.whatif__flow-step {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.whatif__flow-label {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.whatif__flow-value {
+  font-size: 16px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.whatif__flow-step--impact {
+  margin-left: auto;
+}
+
+.whatif__flow-value--impact {
+  color: var(--status-delivered);
+  font-size: 19px;
+}
+
+.whatif__flow-arrow {
+  color: var(--text-faint);
+}
+
+.whatif__note {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ---------- Entity detail modal (View Rep / View Branch) ---------- */
+
+.entity-detail {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+  padding: 22px 24px 20px;
+}
+
+.entity-detail__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.entity-detail__close:hover {
+  color: var(--text);
+  background: var(--row-hover);
+}
+
+.entity-detail__header {
+  margin-bottom: 16px;
+  padding-right: 24px;
+}
+
+.entity-detail__kind {
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.entity-detail__title {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.entity-detail__subtitle {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.entity-detail__stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.entity-detail__stat {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.entity-detail__stat-label {
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+
+.entity-detail__stat-value {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--text);
+}
+
+.entity-detail__deals-title {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.entity-detail__deal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.entity-detail__deal-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+
+.entity-detail__deal-row:hover {
+  border-color: var(--accent);
+  background: var(--row-hover);
+}
+
+.entity-detail__deal-customer {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entity-detail__deal-meta {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.entity-detail__deal-arrow {
+  color: var(--text-faint);
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 860px) {
@@ -547,5 +776,23 @@
 
   .rep-capacity-row {
     flex-wrap: wrap;
+  }
+
+  .entity-detail__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .entity-detail__deal-row {
+    grid-template-columns: auto 1fr;
+    row-gap: 4px;
+  }
+
+  .entity-detail__deal-meta {
+    grid-column: 2;
+    white-space: normal;
+  }
+
+  .entity-detail__deal-arrow {
+    display: none;
   }
 }

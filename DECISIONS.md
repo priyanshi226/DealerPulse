@@ -1,35 +1,45 @@
 # Decisions
 
-This is built against the DealerPulse take-home brief (`ASSIGNMENT.md`). The product is
-shipped under the name **Industrial IQ** — same brief, same dataset, its own identity.
+This is **DealerPulse**, built against the take-home brief (`ASSIGNMENT.md`). An
+earlier draft shipped under a placeholder name before the product had a clear enough
+identity to commit to one — it's DealerPulse everywhere now (nav, tab title, empty
+states, this document), no leftover naming anywhere.
 
 ## What I built, and why
 
 The brief asks for something a CEO and branch managers would actually use, not a chart
-gallery. I split the product into three views that map to three different questions a
-manager asks, because "what happened" and "what do I do about it" are genuinely
-different jobs and mashing them into one page makes both worse:
+gallery. The product is organized around three questions a manager actually asks, each
+with its own tab, because "what happened," "what should I do," and "let me just ask"
+are genuinely different jobs and mashing them into one page makes all three worse:
 
-- **Analytics** — *What's happening?* Descriptive: KPIs, trends, funnel, conversion,
-  pipeline, lead sources, targets, delivery performance, and two ranking tables
-  (branches and reps side by side). A separate **Questions** tab inside Analytics
-  answers ~100 specific, common questions ("What's our conversion rate for Downtown
-  Toyota handled by Suresh Nair?") with its own independent filters per question —
-  useful when you know exactly what you want to ask and don't want to build a chart
-  for it.
-- **Actionable** — *What should I do about it?* Prescriptive: the priorities that
-  matter most right now, a full ranked list of every detected risk, the specific
-  deals worth acting on today with a next step for each, a sortable table of every
-  deal needing attention, rep workload, and a natural-language "Ask AI" box.
-- **Table** — the row-level Data Explorer, for when someone wants to see the actual
-  leads behind a number.
+- **Actionable** — *What should I do about it?* The default landing page — the first
+  thing you see is a short, ranked list of what actually needs attention, not a wall
+  of KPIs. Structure, top to bottom: AI Executive Priorities (the headline cards),
+  the full ranked list behind them, the deals worth acting on today, a rep workload
+  view, a What-If scenario calculator, and a natural-language Ask AI box.
+- **Analytics** — *What's happening?* Purely descriptive: KPIs, trends, funnel,
+  conversion, pipeline, lead sources, targets, delivery performance, and two ranking
+  tables (branches and reps side by side).
+- **Questions** — *What do you want to know?* ~100 specific, common questions
+  ("What's our conversion rate for Downtown Toyota handled by Suresh Nair?"), each
+  with its own independent filters — useful when you know exactly what you want to
+  ask and don't want to build a chart for it. This used to live behind a sub-toggle
+  inside Analytics; it's a full top-level tab now, one click instead of two.
+- **Raw data** — the row-level Data Explorer, reachable from a quieter link next to
+  the three primary tabs rather than competing with them for attention — useful, but
+  not one of the three questions the product is actually organized around.
 
 This directly satisfies the brief's minimum bar: an overview (Analytics), drill-down
-(company → branch → rep, via the ranking tables' "View" actions and Actionable's
-View Branch/Rep buttons, which filter the deals table to that entity), actionable
-insight (the whole Actionable page, not just one insight bolted onto a chart),
-filtering (a global filter bar — branch, rep, source, model, status, date range —
+(company → branch → rep → deal, via the ranking tables and Actionable's View Rep/
+Branch/Source/Model buttons, which open a real profile with that entity's own numbers
+and flagged deals — not a silent filter change), actionable insight (the whole
+Actionable page, not one insight bolted onto a chart), filtering (a global filter bar
 shared by every chart on a page), and responsive layout down to tablet width.
+
+A first-time visitor also gets a guided walkthrough (10 steps, auto-starts once,
+replayable from the topbar) that actually drives the app — it switches tabs and
+scrolls to the real element it's talking about at each step, rather than describing
+something the visitor can't currently see.
 
 ## Key product decisions
 
@@ -103,33 +113,35 @@ math.
   app; Ask AI on the Actionable page handles anything that doesn't fit a
   template, or that needs reasoning across several numbers. Neither replaces
   the other.
-- **No what-if simulator.** I scoped it out rather than ship a shallow one. A
-  credible "if conversion improves by 5%, what's the revenue impact" needs a
-  baseline period, a clear formula for what "improves" changes (rate only? rate
-  and volume?), and UI for picking a scenario — worth doing properly or not at
-  all. See "what's next."
+- **The What-If Simulator is deliberately arithmetic, not another Gemini call.**
+  Three levers (conversion rate, reactivating quiet deals, average deal value),
+  each a simple, stated formula over the real baseline numbers — current →
+  scenario → estimated revenue impact, always labeled a projection, never a
+  promise. I considered routing it through Gemini for a narrated explanation,
+  but the formula is simple enough to show its own work directly in the UI,
+  which is more trustworthy than a model that could just as easily produce a
+  plausible-sounding but different number on a re-run.
 - **No export/sharing.** Genuinely useful, explicitly optional in the brief, and
   lower value than fixing the shared-filter-state bug and the dark-mode default
   turned out to be.
 
 ## What I'd build next with more time
 
-1. **What-if simulator**, done properly: pick a lever (conversion rate, average
-   deal value, reactivating N stagnant deals), show current → projected → the
-   revenue delta, computed deterministically from the same baseline numbers
-   everything else uses, with Gemini limited to narrating the scenario rather
-   than computing it.
-2. **Real drill-down navigation** (branch → rep → deal as actual routes/URLs),
-   rather than the current "scroll to and filter the deals table" behavior —
-   fine for the assessment's scope, but a real product would want shareable,
-   bookmarkable drill-down state.
-3. **Forecasting against monthly targets** — the data already has target units
+1. **Real drill-down navigation** (branch → rep → deal as actual routes/URLs),
+   rather than the current "open a profile modal" behavior — fine for the
+   assessment's scope, but a real product would want shareable, bookmarkable
+   drill-down state.
+2. **Forecasting against monthly targets** — the data already has target units
    and revenue per branch per month; projecting current pace against the
    remaining days in a target period is a natural, deterministic extension of
    the target-achievement math that already exists.
-4. **A light/dark toggle**, now that dark mode is opt-in rather than automatic —
+3. **A light/dark toggle**, now that dark mode is opt-in rather than automatic —
    the palette still exists, it just needs a UI control and a persisted
    preference.
+4. **Let Gemini narrate a What-If scenario** in plain language once a user picks
+   one, without ever letting it touch the underlying number — a small, safe
+   extension of the existing "real data → deterministic calculation → Gemini
+   explains it" pipeline.
 
 ## Patterns I noticed in the data
 

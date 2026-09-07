@@ -122,8 +122,8 @@ export function PerformanceSection({
 
   return (
     <SectionCard
-      title="Performance Explorer"
-      description="Slice leads, revenue, conversion, and pipeline value by branch, rep, source, or model — one reusable view instead of a dozen fixed charts."
+      title="Break it down your way"
+      description="Slice leads, revenue, conversion, and pipeline value by branch, rep, source, or model — whichever angle you need."
       controls={
         <div className="analytics-controls-stack">
           <SegmentedControl value={dim} onChange={setDim} options={DIMENSIONS} />

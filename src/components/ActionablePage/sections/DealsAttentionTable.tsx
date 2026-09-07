@@ -13,15 +13,11 @@ interface DealsAttentionTableProps {
   rows: DealRiskRow[];
   filterOptions: AnalyticsFilterOptions;
   onViewDeal: (leadId: string) => void;
-  /** Set by "View Rep" / "View Branch" buttons elsewhere on the page — scrolls
-   * this table into view already filtered to that entity. */
-  focusRepId: string | null;
-  focusBranchId: string | null;
 }
 
 const RISK_RANK: Record<DealRiskRow['risk'], number> = { high: 0, medium: 1 };
 
-export function DealsAttentionTable({ rows, filterOptions, onViewDeal, focusRepId, focusBranchId }: DealsAttentionTableProps) {
+export function DealsAttentionTable({ rows, filterOptions, onViewDeal }: DealsAttentionTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('risk');
   const [riskFilter, setRiskFilter] = useState<RiskFilter>('all');
   const [branchFilter, setBranchFilter] = useState<string>('all');
@@ -29,27 +25,6 @@ export function DealsAttentionTable({ rows, filterOptions, onViewDeal, focusRepI
   const [stageFilter, setStageFilter] = useState<string>('all');
   const [minValue, setMinValue] = useState<string>('');
   const [minIdleDays, setMinIdleDays] = useState<string>('');
-
-  // "View Rep"/"View Branch" elsewhere on the page hands this table a focus
-  // target — apply it as a filter so the user lands on exactly those rows.
-  // Adjusted during render (React's documented pattern for deriving state from
-  // a prop change) rather than an effect, so it takes effect in the same commit.
-  const [prevFocusRepId, setPrevFocusRepId] = useState(focusRepId);
-  const [prevFocusBranchId, setPrevFocusBranchId] = useState(focusBranchId);
-  if (focusRepId !== prevFocusRepId) {
-    setPrevFocusRepId(focusRepId);
-    if (focusRepId) {
-      setRepFilter(focusRepId);
-      setBranchFilter('all');
-    }
-  }
-  if (focusBranchId !== prevFocusBranchId) {
-    setPrevFocusBranchId(focusBranchId);
-    if (focusBranchId) {
-      setBranchFilter(focusBranchId);
-      setRepFilter('all');
-    }
-  }
 
   const stages = useMemo(() => {
     const map = new Map<string, string>();

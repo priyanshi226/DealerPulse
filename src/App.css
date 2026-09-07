@@ -21,13 +21,44 @@
   margin: 0;
 }
 
+.app-shell__nav-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.app-shell__tour-btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 12px;
+  font-weight: 550;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-shell__tour-btn:hover {
+  color: var(--text-muted);
+  border-color: var(--border-strong);
+}
+
 .app-shell__divider {
   border: none;
   border-top: 1px solid var(--border);
   margin: 0;
 }
 
-/* ---------- Primary Analytics / Table toggle ---------- */
+/* ---------- Primary navigation: Actionable / Analytics / Questions + Raw data ---------- */
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
 .app-toggle.segmented {
   padding: 4px;
@@ -45,8 +76,36 @@
   box-shadow: 0 1px 3px rgba(16, 20, 30, 0.15);
 }
 
+.app-nav__secondary {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-faint);
+  font-size: 12.5px;
+  font-weight: 550;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.app-nav__secondary:hover {
+  color: var(--text-muted);
+  border-color: var(--border-strong);
+}
+
+.app-nav__secondary--active {
+  color: var(--text);
+  background: var(--row-hover);
+  border-color: var(--border-strong);
+}
+
 @media (max-width: 860px) {
   .app-shell__topbar {
     padding: 16px 12px 0;
+  }
+
+  .app-nav {
+    flex-wrap: wrap;
   }
 }
