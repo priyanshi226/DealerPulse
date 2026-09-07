@@ -12,7 +12,12 @@
       "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/pw_final_checks.py\")",
       "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/pw_walkthrough_debug.py\")",
       "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/test_mobile.py\")",
-      "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/test_mobile_simple.py\")"
+      "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/test_mobile_simple.py\")",
+      "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/test_filter_mobile.py\")",
+      "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/test_filter_mobile2.py\")",
+      "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/trace_overflow.py\")",
+      "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/find_overflow_section.py\")",
+      "Bash(\"/Users/priyanshigupta/.local/share/virtualenvs/django-4vDl8yHC/bin/python\" \"/private/tmp/claude-501/-Users-priyanshigupta-Documents-Projects-Industrial-IQ/2e2ec4ab-c799-4525-94fc-c317598ff480/scratchpad/final_mobile_check.py\")"
     ]
   }
 }

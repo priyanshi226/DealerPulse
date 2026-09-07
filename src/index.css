@@ -147,6 +147,38 @@ table {
   border-collapse: collapse;
 }
 
+/* Every top-level page stack (.actionable-stack, .analytics-stack,
+   .questions-stack) is a column flex container. A flex item's cross-axis
+   (here, horizontal) default min-width is `auto`, meaning it refuses to
+   shrink below its content's intrinsic width — so a wide table nested
+   several levels down (inside its own `overflow-x: auto` wrapper) can still
+   force the whole flex item, and with it the entire page, wider than the
+   viewport, instead of scrolling within its own wrapper as intended. This
+   showed up as horizontal page-scroll on phones even though every table
+   *looked* like it had a scroll container already. `min-width: 0` lets the
+   flex item shrink to the container's actual width, so the inner
+   `overflow-x: auto` can do its job. */
+.actionable-stack > *,
+.analytics-stack > *,
+.questions-stack > * {
+  min-width: 0;
+}
+
+/* `.segmented` (the pill-style toggle used for lever pickers, Revenue/Units/
+   Avg-Deal-Value ranking tabs, metric switchers, etc.) is `display:
+   inline-flex` with no wrap — fine on desktop, but a control with 3 longer
+   labels (e.g. What-If's "Conversion rate" / "Reactivate quiet deals" /
+   "Average deal value") is wider than a phone screen, and being inline-flex
+   it doesn't shrink — it just pushes its section, and the whole page, wider
+   than the viewport. Below 520px, let it wrap onto multiple rows and cap it
+   to the available width instead. */
+@media (max-width: 520px) {
+  .segmented {
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+}
+
 /* ---------- App-wide micro-animations ----------
    A restrained entrance animation for the main content sections on every
    page (Analytics/Actionable's SectionCards, Actionable's priority/action

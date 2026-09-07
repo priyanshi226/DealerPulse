@@ -821,3 +821,48 @@ tr.group-header-row td {
     justify-content: space-between;
   }
 }
+
+/* Below 640px, the filter buttons (Branch/Sales Rep/Source/Model/Status) get
+   their own 2-column grid instead of stacking one-per-row full-width — the
+   full-width stack from the 860px breakpoint above wastes a lot of vertical
+   space on a phone since each button is short text in a wide row. Search,
+   date range, and the reset button still span the full width since they need
+   the room. */
+@media (max-width: 640px) {
+  .filter-bar {
+    padding: 12px;
+  }
+
+  .filter-bar__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .filter-bar__row > .multiselect {
+    width: 100%;
+  }
+
+  .filter-bar__row > .multiselect .multiselect__trigger {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-bar__row > .search-input,
+  .filter-bar__row > .date-range,
+  .filter-bar__row > .clear-filters {
+    grid-column: 1 / -1;
+  }
+
+  /* A right-column trigger's panel anchored at left:0 would run off the
+     right edge of the screen — center it under the trigger with a
+     viewport-capped max-width instead, which stays in bounds regardless of
+     which grid column the trigger lands in. */
+  .filter-bar__row > .multiselect .multiselect__panel {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    min-width: 200px;
+    max-width: calc(100vw - 24px);
+  }
+}
