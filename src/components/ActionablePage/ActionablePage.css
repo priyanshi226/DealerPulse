@@ -796,3 +796,46 @@
     display: none;
   }
 }
+
+@media (max-width: 520px) {
+  .actionable-page {
+    padding: 12px 8px 48px;
+  }
+
+  .actionable-page__title {
+    font-size: 18px;
+  }
+
+  .actionable-page__subtitle {
+    font-size: 12px;
+  }
+
+  .priority-card,
+  .action-card,
+  .bottleneck-row {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .priority-card__title,
+  .action-card__title {
+    font-size: 13px;
+  }
+
+  .priority-card__body,
+  .action-card__body {
+    font-size: 11px;
+  }
+
+  .rep-capacity-row {
+    padding: 10px;
+  }
+
+  .whatif__question {
+    font-size: 13px;
+  }
+
+  .whatif__slider {
+    width: 100%;
+  }
+}

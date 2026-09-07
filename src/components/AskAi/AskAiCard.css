@@ -233,3 +233,37 @@
     max-width: 100%;
   }
 }
+
+@media (max-width: 520px) {
+  .ask-ai-card {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .ask-ai-card__title {
+    font-size: 13px;
+  }
+
+  .ask-ai-card__hint {
+    font-size: 11px;
+  }
+
+  .ask-ai-input {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .ask-ai-suggestions {
+    gap: 6px;
+  }
+
+  .ask-ai-suggestion {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .ask-ai-message {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}

@@ -109,3 +109,40 @@
     flex-wrap: wrap;
   }
 }
+
+@media (max-width: 520px) {
+  .app-shell__topbar {
+    padding: 12px 8px 0;
+  }
+
+  .app-shell__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+
+  .app-shell__brand {
+    font-size: 13px;
+  }
+
+  .app-shell__nav-row {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .app-toggle .segmented__item {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .app-shell__tour-btn {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .app-nav__secondary {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}
