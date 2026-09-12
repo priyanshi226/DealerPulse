@@ -14,6 +14,7 @@ import { deriveAnalyticsFilterOptions, filterDeliveries, filterLeads } from '../
 import { EMPTY_ANALYTICS_FILTERS } from '../../analytics/types';
 import type { AnalyticsFilterState } from '../../analytics/types';
 import type { NormalizedData } from '../../data/loadData';
+import { SectionNav } from '../shared/SectionNav';
 import { GlobalFilterBar } from './GlobalFilterBar';
 import { AgingSection } from './sections/AgingSection';
 import { CurrentPipelineSection } from './sections/CurrentPipelineSection';
@@ -60,6 +61,20 @@ export function ChartsView({ data, referenceNowIso }: ChartsViewProps) {
 
   const targetPerfByBranch = useMemo(() => calculateTargetPerformance(data.raw, filters, 'branch'), [data, filters]);
 
+  const navItems = [
+    { id: 'overview', label: 'Overview' },
+    { id: 'ranked-dealerships', label: 'Branches' },
+    { id: 'ranked-reps', label: 'Reps' },
+    { id: 'pipeline-source', label: 'Pipeline & Source' },
+    { id: 'funnel', label: 'Funnel' },
+    { id: 'performance', label: 'Performance' },
+    { id: 'targets', label: 'Targets' },
+    { id: 'trend', label: 'Trend' },
+    { id: 'velocity-aging', label: 'Velocity & Aging' },
+    { id: 'delivery', label: 'Delivery' },
+    { id: 'expected-close-loss', label: 'Forecast & Loss' },
+  ];
+
   return (
     <div className="analytics-page">
       <div className="analytics-page__intro">
@@ -76,64 +91,85 @@ export function ChartsView({ data, referenceNowIso }: ChartsViewProps) {
           <p>No data for the selected filters.</p>
         </div>
       ) : (
-        <div className="analytics-stack">
-          <OverviewSection overview={overview} filters={filters} filterOptions={filterOptions} />
+        <>
+          <SectionNav items={navItems} />
+          <div className="analytics-stack">
+            <div id="overview" className="section-anchor">
+              <OverviewSection overview={overview} filters={filters} filterOptions={filterOptions} />
+            </div>
 
-          <div id="ranked-dealerships">
-            <RankedDealershipsSection
-              filteredLeads={filteredLeads}
-              filteredDeliveries={filteredDeliveries}
-              referenceNowIso={referenceNowIso}
-              raw={data.raw}
-              filters={filters}
-              filterOptions={filterOptions}
-            />
+            <div id="ranked-dealerships" className="section-anchor">
+              <RankedDealershipsSection
+                filteredLeads={filteredLeads}
+                filteredDeliveries={filteredDeliveries}
+                referenceNowIso={referenceNowIso}
+                raw={data.raw}
+                filters={filters}
+                filterOptions={filterOptions}
+              />
+            </div>
+            <div id="ranked-reps" className="section-anchor">
+              <RankedRepsSection
+                filteredLeads={filteredLeads}
+                filteredDeliveries={filteredDeliveries}
+                referenceNowIso={referenceNowIso}
+                filters={filters}
+                filterOptions={filterOptions}
+              />
+            </div>
+
+            <div id="pipeline-source" className="section-anchor analytics-row">
+              <CurrentPipelineSection rows={pipeline} filters={filters} filterOptions={filterOptions} />
+              <SourceMixSection
+                filteredLeads={filteredLeads}
+                filteredDeliveries={filteredDeliveries}
+                referenceNowIso={referenceNowIso}
+                filters={filters}
+                filterOptions={filterOptions}
+              />
+            </div>
+
+            <div id="funnel" className="section-anchor">
+              <FunnelSection funnel={funnel} filters={filters} filterOptions={filterOptions} />
+            </div>
+            <div id="performance" className="section-anchor">
+              <PerformanceSection
+                filteredLeads={filteredLeads}
+                filteredDeliveries={filteredDeliveries}
+                referenceNowIso={referenceNowIso}
+                branchIndexById={branchIndexById}
+                targetRowsByBranch={targetPerfByBranch.rows}
+                targetsApplicable={targetPerfByBranch.applicable}
+                filters={filters}
+                filterOptions={filterOptions}
+              />
+            </div>
+            <div id="targets" className="section-anchor">
+              <TargetsSection raw={data.raw} filters={filters} filterOptions={filterOptions} />
+            </div>
+            <div id="trend" className="section-anchor">
+              <TrendSection
+                raw={data.raw}
+                filteredLeads={filteredLeads}
+                filteredDeliveries={filteredDeliveries}
+                referenceNowIso={referenceNowIso}
+                filters={filters}
+                filterOptions={filterOptions}
+              />
+            </div>
+            <div id="velocity-aging" className="section-anchor analytics-row">
+              <VelocitySection stages={velocity} filters={filters} filterOptions={filterOptions} />
+              <AgingSection buckets={aging} filters={filters} filterOptions={filterOptions} />
+            </div>
+            <div id="delivery" className="section-anchor">
+              <DeliverySection delivery={delivery} filters={filters} filterOptions={filterOptions} />
+            </div>
+            <div id="expected-close-loss" className="section-anchor analytics-row">
+              <ExpectedCloseSection buckets={expectedClose} filters={filters} filterOptions={filterOptions} />
+              <LossSection loss={loss} filters={filters} filterOptions={filterOptions} />
+            </div>
           </div>
-          <RankedRepsSection
-            filteredLeads={filteredLeads}
-            filteredDeliveries={filteredDeliveries}
-            referenceNowIso={referenceNowIso}
-            filters={filters}
-            filterOptions={filterOptions}
-          />
-
-          <div className="analytics-row">
-            <CurrentPipelineSection rows={pipeline} filters={filters} filterOptions={filterOptions} />
-            <SourceMixSection
-              filteredLeads={filteredLeads}
-              filteredDeliveries={filteredDeliveries}
-              referenceNowIso={referenceNowIso}
-              filters={filters}
-              filterOptions={filterOptions}
-            />
-          </div>
-
-          <FunnelSection funnel={funnel} filters={filters} filterOptions={filterOptions} />
-          <PerformanceSection
-            filteredLeads={filteredLeads}
-            filteredDeliveries={filteredDeliveries}
-            referenceNowIso={referenceNowIso}
-            branchIndexById={branchIndexById}
-            targetRowsByBranch={targetPerfByBranch.rows}
-            targetsApplicable={targetPerfByBranch.applicable}
-            filters={filters}
-            filterOptions={filterOptions}
-          />
-          <TargetsSection raw={data.raw} filters={filters} filterOptions={filterOptions} />
-          <TrendSection
-            raw={data.raw}
-            filteredLeads={filteredLeads}
-            filteredDeliveries={filteredDeliveries}
-            referenceNowIso={referenceNowIso}
-            filters={filters}
-            filterOptions={filterOptions}
-          />
-          <VelocitySection stages={velocity} filters={filters} filterOptions={filterOptions} />
-          <DeliverySection delivery={delivery} filters={filters} filterOptions={filterOptions} />
-          <AgingSection buckets={aging} filters={filters} filterOptions={filterOptions} />
-          <ExpectedCloseSection buckets={expectedClose} filters={filters} filterOptions={filterOptions} />
-          <LossSection loss={loss} filters={filters} filterOptions={filterOptions} />
-        </div>
+        </>
       )}
     </div>
   );

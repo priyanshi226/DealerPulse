@@ -15,6 +15,7 @@ import { loadDealershipData } from '../../data/loadData';
 import type { NormalizedData } from '../../data/loadData';
 import type { EnrichedLead, LeadSource } from '../../data/types';
 import { AskAiCard } from '../AskAi/AskAiCard';
+import { SectionNav } from '../shared/SectionNav';
 import { GlobalFilterBar } from '../AnalyticsPage/GlobalFilterBar';
 import { LeadJourneyModal } from '../DataExplorer/LeadJourneyModal';
 import '../DataExplorer/DataExplorer.css';
@@ -231,38 +232,57 @@ export function ActionablePage() {
           <p>No data for the selected filters.</p>
         </div>
       ) : (
-        <div className="actionable-stack">
-          <div id="ask-ai-card">
-            <AskAiCard
-              title="Ask about risks, reps, or priorities"
-              hint="Ask a natural-language question grounded in this dataset — the assistant retrieves the real numbers before answering."
-              suggestions={ASK_AI_ACTIONABLE_SUGGESTIONS}
-            />
-          </div>
-
-          <div id="what-if-simulator">
-            <WhatIfSection filteredLeads={filteredLeads} referenceNowIso={referenceNowIso} />
-          </div>
-
-          <div id="executive-priorities">
-            <ExecutivePrioritiesSection insights={insights} onFocusEntity={handleFocusEntity} />
-          </div>
-
-          <BottlenecksSection insights={insights} onFocusEntity={handleFocusEntity} />
-
-          <div id="deals-requiring-attention">
-            <DealsAttentionTable rows={dealRisk} filterOptions={filterOptions} onViewDeal={handleViewDeal} />
-          </div>
-
-          <NextBestActionsSection
-            rows={dealRisk}
-            onViewDeal={handleViewDeal}
-            onViewRep={(repId) => setViewingEntity({ type: 'rep', id: repId })}
-            onViewBranch={(branchId) => setViewingEntity({ type: 'branch', id: branchId })}
+        <>
+          <SectionNav
+            items={[
+              { id: 'ask-ai-card', label: 'Ask AI' },
+              { id: 'what-if-simulator', label: 'What-If' },
+              { id: 'executive-priorities', label: 'Priorities' },
+              { id: 'bottlenecks', label: 'Full List' },
+              { id: 'deals-requiring-attention', label: 'Deals' },
+              { id: 'next-best-actions', label: 'Next Actions' },
+              { id: 'rep-capacity', label: 'Rep Capacity' },
+            ]}
           />
+          <div className="actionable-stack">
+            <div id="ask-ai-card" className="section-anchor">
+              <AskAiCard
+                title="Ask about risks, reps, or priorities"
+                hint="Ask a natural-language question grounded in this dataset — the assistant retrieves the real numbers before answering."
+                suggestions={ASK_AI_ACTIONABLE_SUGGESTIONS}
+              />
+            </div>
 
-          <RepCapacitySection rows={repCapacity} onViewRep={(repId) => setViewingEntity({ type: 'rep', id: repId })} />
-        </div>
+            <div id="what-if-simulator" className="section-anchor">
+              <WhatIfSection filteredLeads={filteredLeads} referenceNowIso={referenceNowIso} />
+            </div>
+
+            <div id="executive-priorities" className="section-anchor">
+              <ExecutivePrioritiesSection insights={insights} onFocusEntity={handleFocusEntity} />
+            </div>
+
+            <div id="bottlenecks" className="section-anchor">
+              <BottlenecksSection insights={insights} onFocusEntity={handleFocusEntity} />
+            </div>
+
+            <div id="deals-requiring-attention" className="section-anchor">
+              <DealsAttentionTable rows={dealRisk} filterOptions={filterOptions} onViewDeal={handleViewDeal} />
+            </div>
+
+            <div id="next-best-actions" className="section-anchor">
+              <NextBestActionsSection
+                rows={dealRisk}
+                onViewDeal={handleViewDeal}
+                onViewRep={(repId) => setViewingEntity({ type: 'rep', id: repId })}
+                onViewBranch={(branchId) => setViewingEntity({ type: 'branch', id: branchId })}
+              />
+            </div>
+
+            <div id="rep-capacity" className="section-anchor">
+              <RepCapacitySection rows={repCapacity} onViewRep={(repId) => setViewingEntity({ type: 'rep', id: repId })} />
+            </div>
+          </div>
+        </>
       )}
 
       {selectedLead && <LeadJourneyModal lead={selectedLead} onClose={() => setSelectedLead(null)} />}
