@@ -47,6 +47,9 @@ export function ChartInfoButton({ info, filters, filterOptions }: ChartInfoButto
         ⓘ
       </button>
       {open && (
+        <div className="chart-info__backdrop" onClick={() => setOpen(false)} />
+      )}
+      {open && (
         <div className="chart-info__panel" role="dialog" aria-label={`${info.title} — details`}>
           <div className="chart-info__header">
             <span>{info.title}</span>

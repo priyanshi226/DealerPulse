@@ -139,19 +139,27 @@
   background: var(--accent-muted);
 }
 
+.chart-info__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 18, 24, 0.4);
+  z-index: 40;
+}
+
 .chart-info__panel {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 340px;
-  max-height: 420px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(400px, calc(100vw - 32px));
+  max-height: min(80vh, 560px);
   overflow-y: auto;
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: var(--shadow-md);
   padding: 14px 16px;
-  z-index: 40;
+  z-index: 41;
   font-size: 12.5px;
 }
 

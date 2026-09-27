@@ -45,6 +45,7 @@ export function InfoTooltip({ label, children }: InfoTooltipProps) {
       >
         ⓘ
       </button>
+      {open && <div className="info-tip__backdrop" onClick={() => setOpen(false)} />}
       {open && (
         <div className="info-tip__panel" role="tooltip">
           <div className="info-tip__label">{label}</div>
