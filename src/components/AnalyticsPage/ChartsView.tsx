@@ -50,6 +50,15 @@ export function ChartsView({ data, referenceNowIso }: ChartsViewProps) {
   const filteredLeads = useMemo(() => filterLeads(data.leads, filters), [data, filters]);
   const filteredDeliveries = useMemo(() => filterDeliveries(filteredLeads, data.raw.deliveries), [data, filteredLeads]);
 
+  // Ranked tables need each row's rank among ALL branches/reps (under every
+  // other active filter) even when the branch/rep filter itself narrows the
+  // table down to one row — otherwise a filtered-down row always looks like
+  // rank #1. These cohorts drop just that one dimension's filter.
+  const branchRankLeads = useMemo(() => filterLeads(data.leads, { ...filters, branchIds: [] }), [data, filters]);
+  const branchRankDeliveries = useMemo(() => filterDeliveries(branchRankLeads, data.raw.deliveries), [data, branchRankLeads]);
+  const repRankLeads = useMemo(() => filterLeads(data.leads, { ...filters, repIds: [] }), [data, filters]);
+  const repRankDeliveries = useMemo(() => filterDeliveries(repRankLeads, data.raw.deliveries), [data, repRankLeads]);
+
   const overview = useMemo(() => calculateOverview(filteredLeads, data.raw, filters), [data, filteredLeads, filters]);
   const pipeline = useMemo(() => calculateCurrentPipeline(filteredLeads), [filteredLeads]);
   const funnel = useMemo(() => calculateHistoricalFunnel(filteredLeads), [filteredLeads]);
@@ -102,6 +111,8 @@ export function ChartsView({ data, referenceNowIso }: ChartsViewProps) {
               <RankedDealershipsSection
                 filteredLeads={filteredLeads}
                 filteredDeliveries={filteredDeliveries}
+                allBranchesLeads={branchRankLeads}
+                allBranchesDeliveries={branchRankDeliveries}
                 referenceNowIso={referenceNowIso}
                 raw={data.raw}
                 filters={filters}
@@ -112,6 +123,8 @@ export function ChartsView({ data, referenceNowIso }: ChartsViewProps) {
               <RankedRepsSection
                 filteredLeads={filteredLeads}
                 filteredDeliveries={filteredDeliveries}
+                allRepsLeads={repRankLeads}
+                allRepsDeliveries={repRankDeliveries}
                 referenceNowIso={referenceNowIso}
                 filters={filters}
                 filterOptions={filterOptions}

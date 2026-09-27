@@ -21,14 +21,25 @@ const METRIC_OPTIONS: { value: RankMetric; label: string }[] = [
 interface RankedRepsSectionProps {
   filteredLeads: EnrichedLead[];
   filteredDeliveries: Delivery[];
+  /** Same cohort as filteredLeads/filteredDeliveries but with the sales rep
+   * filter itself lifted, so a rep's true rank among ALL reps can still be
+   * shown even when the rep filter narrows the table to them alone. */
+  allRepsLeads: EnrichedLead[];
+  allRepsDeliveries: Delivery[];
   referenceNowIso: string;
   filters: AnalyticsFilterState;
   filterOptions: AnalyticsFilterOptions;
 }
 
+function metricValue(row: { revenue: number; deliveredCount: number; avgDealValue: number | null }, metric: RankMetric): number {
+  return metric === 'revenue' ? row.revenue : metric === 'units' ? row.deliveredCount : (row.avgDealValue ?? -1);
+}
+
 export function RankedRepsSection({
   filteredLeads,
   filteredDeliveries,
+  allRepsLeads,
+  allRepsDeliveries,
   referenceNowIso,
   filters,
   filterOptions,
@@ -40,11 +51,15 @@ export function RankedRepsSection({
     [filteredLeads, filteredDeliveries, referenceNowIso],
   );
 
-  const ranked = useMemo(() => {
-    const value = (r: (typeof rows)[number]) =>
-      metric === 'revenue' ? r.revenue : metric === 'units' ? r.deliveredCount : (r.avgDealValue ?? -1);
-    return [...rows].sort((a, b) => value(b) - value(a));
-  }, [rows, metric]);
+  const ranked = useMemo(() => [...rows].sort((a, b) => metricValue(b, metric) - metricValue(a, metric)), [rows, metric]);
+
+  // Overall rank comes from the rep-filter-free cohort, so it stays correct
+  // even when the rep filter itself narrows `ranked` down to a single row.
+  const overallRank = useMemo(() => {
+    const allRows = calculateDimensionPerformance(allRepsLeads, allRepsDeliveries, 'rep', referenceNowIso);
+    const allRanked = [...allRows].sort((a, b) => metricValue(b, metric) - metricValue(a, metric));
+    return new Map(allRanked.map((r, i) => [r.key, i + 1]));
+  }, [allRepsLeads, allRepsDeliveries, referenceNowIso, metric]);
 
   const info: ChartInfo = {
     title: 'Who is driving sales?',
@@ -86,25 +101,28 @@ export function RankedRepsSection({
               </tr>
             </thead>
             <tbody>
-              {ranked.map((row, i) => (
-                <tr key={row.key} className={i < 3 ? 'ranking-row--top' : undefined}>
-                  <td className="col-right">
-                    <span className={`ranking-badge ranking-badge--${i + 1 <= 3 ? i + 1 : 'default'}`}>{i + 1}</span>
-                  </td>
-                  <td>
-                    {row.label.split(' — ')[1] ?? row.label}
-                    {row.lowSample && (
-                      <span className="metric-table__flag" title="Fewer than 5 leads — treat this rep's figures with caution">
-                        low n
-                      </span>
-                    )}
-                  </td>
-                  <td className="col-right">{(row.leadCount - row.deliveredCount - row.lostCount).toLocaleString('en-IN')}</td>
-                  <td className="col-right">{row.deliveredCount.toLocaleString('en-IN')}</td>
-                  <td className="col-right">{formatCompactCurrency(row.revenue)}</td>
-                  <td className="col-right">{row.avgDealValue === null ? '—' : formatCompactCurrency(row.avgDealValue)}</td>
-                </tr>
-              ))}
+              {ranked.map((row, i) => {
+                const rank = overallRank.get(row.key) ?? i + 1;
+                return (
+                  <tr key={row.key} className={rank <= 3 ? 'ranking-row--top' : undefined}>
+                    <td className="col-right">
+                      <span className={`ranking-badge ranking-badge--${rank <= 3 ? rank : 'default'}`}>{rank}</span>
+                    </td>
+                    <td>
+                      {row.label.split(' — ')[1] ?? row.label}
+                      {row.lowSample && (
+                        <span className="metric-table__flag" title="Fewer than 5 leads — treat this rep's figures with caution">
+                          low n
+                        </span>
+                      )}
+                    </td>
+                    <td className="col-right">{(row.leadCount - row.deliveredCount - row.lostCount).toLocaleString('en-IN')}</td>
+                    <td className="col-right">{row.deliveredCount.toLocaleString('en-IN')}</td>
+                    <td className="col-right">{formatCompactCurrency(row.revenue)}</td>
+                    <td className="col-right">{row.avgDealValue === null ? '—' : formatCompactCurrency(row.avgDealValue)}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

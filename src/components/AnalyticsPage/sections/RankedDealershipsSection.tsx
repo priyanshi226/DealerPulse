@@ -21,15 +21,26 @@ const METRIC_OPTIONS: { value: RankMetric; label: string }[] = [
 interface RankedDealershipsSectionProps {
   filteredLeads: EnrichedLead[];
   filteredDeliveries: Delivery[];
+  /** Same cohort as filteredLeads/filteredDeliveries but with the branch
+   * filter itself lifted, so a branch's true rank among ALL branches can
+   * still be shown even when the branch filter narrows the table to it alone. */
+  allBranchesLeads: EnrichedLead[];
+  allBranchesDeliveries: Delivery[];
   referenceNowIso: string;
   raw: DealershipDataset;
   filters: AnalyticsFilterState;
   filterOptions: AnalyticsFilterOptions;
 }
 
+function metricValue(row: { revenue: number; deliveredCount: number; avgDealValue: number | null }, metric: RankMetric): number {
+  return metric === 'revenue' ? row.revenue : metric === 'units' ? row.deliveredCount : (row.avgDealValue ?? -1);
+}
+
 export function RankedDealershipsSection({
   filteredLeads,
   filteredDeliveries,
+  allBranchesLeads,
+  allBranchesDeliveries,
   referenceNowIso,
   raw,
   filters,
@@ -51,11 +62,16 @@ export function RankedDealershipsSection({
     [filteredLeads, filteredDeliveries, referenceNowIso],
   );
 
-  const ranked = useMemo(() => {
-    const value = (r: (typeof rows)[number]) =>
-      metric === 'revenue' ? r.revenue : metric === 'units' ? r.deliveredCount : (r.avgDealValue ?? -1);
-    return [...rows].sort((a, b) => value(b) - value(a));
-  }, [rows, metric]);
+  const ranked = useMemo(() => [...rows].sort((a, b) => metricValue(b, metric) - metricValue(a, metric)), [rows, metric]);
+
+  // Overall rank comes from the branch-filter-free cohort, so it stays
+  // correct even when the branch filter itself narrows `ranked` down to a
+  // single row (see the prop doc above).
+  const overallRank = useMemo(() => {
+    const allRows = calculateDimensionPerformance(allBranchesLeads, allBranchesDeliveries, 'branch', referenceNowIso);
+    const allRanked = [...allRows].sort((a, b) => metricValue(b, metric) - metricValue(a, metric));
+    return new Map(allRanked.map((r, i) => [r.key, i + 1]));
+  }, [allBranchesLeads, allBranchesDeliveries, referenceNowIso, metric]);
 
   const info: ChartInfo = {
     title: 'Which branches are performing best?',
@@ -99,10 +115,11 @@ export function RankedDealershipsSection({
             <tbody>
               {ranked.map((row, i) => {
                 const branch = branchById.get(row.key);
+                const rank = overallRank.get(row.key) ?? i + 1;
                 return (
-                  <tr key={row.key} className={i < 3 ? 'ranking-row--top' : undefined}>
+                  <tr key={row.key} className={rank <= 3 ? 'ranking-row--top' : undefined}>
                     <td className="col-right">
-                      <span className={`ranking-badge ranking-badge--${i + 1 <= 3 ? i + 1 : 'default'}`}>{i + 1}</span>
+                      <span className={`ranking-badge ranking-badge--${rank <= 3 ? rank : 'default'}`}>{rank}</span>
                     </td>
                     <td>{branch?.name ?? row.label}</td>
                     <td>{branch?.city ?? '—'}</td>
