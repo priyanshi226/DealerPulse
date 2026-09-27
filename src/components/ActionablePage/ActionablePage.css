@@ -348,26 +348,6 @@
 
 /* ---------- Deals Requiring Attention table ---------- */
 
-.deals-table__filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.deals-table__filters select,
-.deals-table__num-input {
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  border-radius: 7px;
-  padding: 5px 8px;
-  font-size: 12px;
-}
-
-.deals-table__num-input {
-  width: 110px;
-}
-
 .deals-table-wrap {
   overflow-x: auto;
 }

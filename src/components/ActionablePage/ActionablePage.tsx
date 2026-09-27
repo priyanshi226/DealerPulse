@@ -266,7 +266,7 @@ export function ActionablePage() {
             </div>
 
             <div id="deals-requiring-attention" className="section-anchor">
-              <DealsAttentionTable rows={dealRisk} filterOptions={filterOptions} onViewDeal={handleViewDeal} />
+              <DealsAttentionTable rows={dealRisk} onViewDeal={handleViewDeal} />
             </div>
 
             <div id="next-best-actions" className="section-anchor">
